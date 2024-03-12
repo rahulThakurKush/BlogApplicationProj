@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from .models import blogdata, UserModel, Category, Comment
 from django.contrib import messages
+from django.core.paginator import Paginator
 from .send_email import send_otp_email
 from django.http import HttpResponseRedirect
 import random
@@ -12,7 +13,12 @@ import string
 
 def index(request):
     blogs = blogdata.objects.all()
-    return render(request, 'index.html', {'blogs': blogs})
+    categories = Category.objects.all()
+    p = Paginator(blogdata.objects.all(), 3)
+    page = request.GET.get('page')
+    blogs_list = p.get_page(page)
+
+    return render(request, 'index.html', {'blogs': blogs, 'blogs_list': blogs_list, 'categories': categories})
 
 
 
@@ -86,6 +92,7 @@ def user_login(request):
     return render(request, 'login.html')
 
 
+
 def user_dashboard(request):
     if request.method == "POST":
         title = request.POST.get('title')
@@ -102,6 +109,11 @@ def user_dashboard(request):
 
     categories = Category.objects.all()
     return render(request, 'contact.html', {'categories': categories})
+
+
+def user_profile(request):
+    pass
+    return render(request, 'user_profile.html')
 
 
 
@@ -144,6 +156,19 @@ def post_detail(request, pk):
         comments = Comment.objects.none()
 
     return render(request, 'post-image.html', {'blog': blog, 'comments': comments, 'post': post})
+
+
+
+def category_detail(request, pk):
+
+    categories = get_object_or_404(Category, id=pk)
+    try:
+        blogs = blogdata.objects.filter(category=categories)
+    except blogdata.DoesNotExist:
+        blogs = blogdata.objects.none()
+
+    return render(request, 'category.html', {'categories': categories, 'blogs': blogs})
+
 
 
 
