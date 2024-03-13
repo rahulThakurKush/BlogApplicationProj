@@ -71,7 +71,7 @@
                             </a>
                             
                         </li>
-                        <li class="nav-item"><a href="{% url 'my_blogs' %}" class="nav-link">My Blogs</a></li>
+                        <li class="nav-item"><a href="{% url 'my_blogs' user.id %}" class="nav-link">My Blogs</a></li>
                         <li class="nav-item d-lg-none">
                             <div class="search_toggle p-3 d-inline-block bg-white"><i class="ti-search"></i></div>
                         </li>
@@ -93,7 +93,7 @@
                     <div class="row justify-content-center">
                         <div class="col-lg-8">
                             <h2 class="mb-4">Add Your Blog</h2>
-                            <form action="{% url 'user_dashboard' %}" method="post" id="contact-form" class="contact-form" enctype="multipart/form-data"> {% csrf_token %}
+                            <form action="{% url 'user_dashboard' user.id %}" method="post" id="contact-form" class="contact-form" enctype="multipart/form-data"> {% csrf_token %}
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">

@@ -45,7 +45,7 @@
 		<div class="container">
 			<div class="row align-items-center">
 				<div class="col-lg-2 col-md-4 text-center d-none d-lg-block">
-					<a class="navbar-brand " href="{% url 'index' %}">
+					<a class="navbar-brand " href="#"> 
 						<img src="{% static 'images/logo.png' %}" alt="" class="img-fluid">
 					</a>
 				</div>
@@ -79,11 +79,16 @@
 										Category
 									</a>
 									
-									<div class="dropdown-menu" aria-labelledby="navbarDropdown3">
-										{% for category in categories %}
+									
+
+								<div class="dropdown-menu" aria-labelledby="navbarDropdown3">
+									{% load custom_tags %}
+									{% show_categories as categories %}
+									{% for category in categories %}
 										<a class="dropdown-item" href="{% url 'category_detail' category.id %}">{{ category.name }}</a>
-										{% endfor %}
-									</div>
+									{% endfor %}
+								</div>
+
 								
 								</li>
 								{% comment %} <li class="nav-item">
@@ -101,15 +106,21 @@
 					
 							<!-- Signup and Login Buttons as Bootstrap Buttons -->
 							<div class="navbar-nav ml-auto">
-								<a href="{% url 'signup' %}" class="btn btn-outline-primary mr-2" style="color: #fff; border-color: #fff;">Signup</a>
-								<a href="{% url 'user_login' %}" class="btn btn-primary" style="background-color: #007bff; border-color: #007bff;">Login</a>
+								{% if user.is_authenticated %}
+									<a href="{% url 'user_logout' %}" class="btn btn-primary" style="background-color: #007bff; border-color: #007bff;">Logout</a>
+								{% else %}
+									<a href="{% url 'signup' %}" class="btn btn-outline-primary mr-2" style="color: #fff; border-color: #fff;">Signup</a>
+									<a href="{% url 'user_login' %}" class="btn btn-primary" style="background-color: #007bff; border-color: #007bff;">Login</a>
+								{% endif %}
 							</div>
+							
 				
 						</div>
 						<div class="col-lg-2 col-md-4 col-6 text-right">
-							<!-- My Dashboard Button -->
-							<a href="{% url 'user_dashboard' %}" class="btn btn-primary" style="background-color: #007bff; border-color: #007bff;">My Dashboard</a>
-							<!-- End of My Dashboard Button -->
+							{% if user.is_authenticated %}
+							<a href="{% url 'user_dashboard' user.id %}" class="btn btn-primary" style="background-color: #007bff; border-color: #007bff;">My Dashboard</a>
+							{% endif %}
+						
 						</div>
 					</nav>	
 					
@@ -123,7 +134,7 @@
 		<div class="container-fluid">
 			<div class="row no-gutters">
 				<div class="col-lg-12 col-sm-12 col-md-12 slider-wrap">
-				{% if blogs_list.number == 1 %}	
+			    {% if blogs_list.number == 1 %}
 				{% for blog in blogs %} 
 			
 					<div class="slider-item">
@@ -151,6 +162,7 @@
 					</div>
 				{% endfor %}
 				{% endif %}
+				
 					
 				</div>
 				
@@ -186,7 +198,7 @@
 					</div>
 
                 {% comment %} pagination {% endcomment %}
-				<div class="m-auto">
+				 <div class="m-auto">
 					<div class="pagination mt-5 pt-4">
 						<ul class="list-inline">
 							<!-- Previous page link -->
@@ -207,7 +219,7 @@
 							{% endif %}
 						</ul>
 					</div>
-				</div>
+				</div>  
 				
 				{% comment %} <div class="m-auto">
 					<div class="pagination mt-5 pt-4">

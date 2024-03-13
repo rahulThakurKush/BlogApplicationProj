@@ -71,6 +71,7 @@ class UserProfile(models.Model):
 
 
 class blogdata(models.Model):
+    user = models.ForeignKey(UserModel,on_delete=models.CASCADE, blank=True, null=True)
     title = models.CharField(max_length=255)
     desc = models.CharField(max_length=255)
     blogimg = models.ImageField(upload_to="blog_app/static/images",default = "")

@@ -59,19 +59,10 @@
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Post Formats
                         </a>
-                        <a href="{% url 'user_dashboard' %}" class="btn btn-primary" style="background-color: #007bff; border-color: #007bff;">My Dashboard</a>
+                        <a href="{% url 'user_dashboard' user.id %}" class="btn btn-primary" style="background-color: #007bff; border-color: #007bff;">My Dashboard</a>
                         
                     </li>
-                    <!-- <li class="col-lg-2 col-md-4 col-6 text-right"> -->
-                    <!-- <li>
-                       
-                        <a href="{% url 'user_dashboard' %}" class="btn btn-primary" style="background-color: #007bff; border-color: #007bff;">My Dashboard</a>
-                        
-                    </li> -->
-                    <!-- <li class="nav-item"><a href="{% url 'my_blogs' %}" class="nav-link">My Blogs</a></li> -->
-                    <!-- <li class="nav-item d-lg-none">
-                        <div class="search_toggle p-3 d-inline-block bg-white"><i class="ti-search"></i></div>
-                    </li> -->
+                   
                 </ul>
             </div>
 
@@ -200,7 +191,7 @@
         </tbody>
     </table>
     <div class="link-container">
-        <a href="{% url 'user_dashboard' %}">Add Blog</a>
+        <a href="{% url 'user_dashboard' user.id %}">Add Blog</a>
     </div>
 </div>
 

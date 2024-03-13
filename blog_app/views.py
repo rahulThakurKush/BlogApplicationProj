@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
-from .models import blogdata, UserModel, Category, Comment
+from .models import blogdata, UserModel, Category, Comment, UserProfile
 from django.contrib import messages
 from django.core.paginator import Paginator
 from .send_email import send_otp_email
@@ -18,7 +18,7 @@ def index(request):
     page = request.GET.get('page')
     blogs_list = p.get_page(page)
 
-    return render(request, 'index.html', {'blogs': blogs, 'blogs_list': blogs_list, 'categories': categories})
+    return render(request, 'index.html', {'blogs': blogs, 'blogs_list': blogs_list})
 
 
 
@@ -51,6 +51,7 @@ def signup(request):
 
 
 from django.urls import reverse
+
 
 def verify_otp(request):
     if request.method == "POST":
@@ -92,8 +93,14 @@ def user_login(request):
     return render(request, 'login.html')
 
 
+def user_logout(request):
+    logout(request)
 
-def user_dashboard(request):
+    return redirect('index')
+
+
+@login_required
+def user_dashboard(request, pk):
     if request.method == "POST":
         title = request.POST.get('title')
         desc = request.POST.get('description')
@@ -102,7 +109,7 @@ def user_dashboard(request):
         category_id = request.POST.get('category')
         category = Category.objects.get(pk=category_id) 
         # Create a new blogdata instance with the uploaded file
-        blog = blogdata.objects.create(title=title, desc=desc, blogimg=blogimg, blog_content=blog_content, category=category)
+        blog = blogdata.objects.create(user=request.user,title=title, desc=desc, blogimg=blogimg, blog_content=blog_content, category=category)
         pk = blog.pk
         blog.save()
         return redirect('post_detail', pk=pk)
@@ -111,9 +118,31 @@ def user_dashboard(request):
     return render(request, 'contact.html', {'categories': categories})
 
 
+@login_required
 def user_profile(request):
-    pass
-    return render(request, 'user_profile.html')
+    user_profile = request.user.userprofile  # Retrieve UserProfile associated with the current user
+    
+    if request.method == "POST":
+        # Update the fields of the existing UserProfile instance
+        user_profile.profile_picture = request.FILES.get('profile_picture')
+        user_profile.cover_photo = request.FILES.get('cover_photo')
+        user_profile.address_line_1 = request.POST.get('address_line_1')
+        user_profile.address_line_2 = request.POST.get('address_line_2')
+        user_profile.country = request.POST.get('country')
+        user_profile.state = request.POST.get('state')
+        user_profile.city = request.POST.get('city')
+        user_profile.pin_code = request.POST.get('pin_code')
+        
+        # Save the updated UserProfile instance
+        user_profile.save()
+
+        print('user_profile.user.id', user_profile.user.id)
+        
+        # Redirect to user_dashboard with the user_profile's pk
+        return redirect('user_dashboard', pk=user_profile.user.id)
+
+    # If request method is not POST, render the user_profile.html template with the existing user profile
+    return render(request, 'user_profile.html', {'user_profile': user_profile})
 
 
 
@@ -122,18 +151,26 @@ def blog_category(request):
         return render(request, 'contact.html', {'categories': categories})
 
 
-def my_blogs(request):
+
+@login_required
+def my_blogs(request, pk):
+    user = get_object_or_404(UserModel, id=pk)
+    print("===============>", user)
     try:
-        blogs = blogdata.objects.all()
+        blogs = blogdata.objects.filter(user=user)
+        print("===============>", blogs)
+
     except blogdata.DoesNotExist:
-        return HttpResponse('Post not found')
+        blogs = blogdata.objects.none()
     
     return render(request, 'my_blog_list.html', {'blogs': blogs})
+
 
 
 def show_blog(request):
     blogs = blogdata.objects.all()
     return render(request, 'standard-fullwidth.html', {'blogs': blogs})
+
 
 
 def post_detail(request, pk):
@@ -167,7 +204,7 @@ def category_detail(request, pk):
     except blogdata.DoesNotExist:
         blogs = blogdata.objects.none()
 
-    return render(request, 'category.html', {'categories': categories, 'blogs': blogs})
+    return render(request, 'category.html', { 'blogs': blogs})
 
 
 

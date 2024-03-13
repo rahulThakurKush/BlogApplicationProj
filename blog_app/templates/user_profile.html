@@ -57,7 +57,7 @@
 <body>
     <div class="container">
         <h2 class="form-title">User Profile Form</h2>
-        <form action="#" method="POST">
+        <form action="{% url 'user_profile' %}" method="POST"> {% csrf_token %}
             <div class="form-group">
                 <label for="profile_picture">Profile picture:</label>
                 <input type="file" id="profile_picture" name="profile_picture" class="form-control">
@@ -90,14 +90,14 @@
                 <label for="pin_code">Pin code:</label>
                 <input type="text" id="pin_code" name="pin_code" class="form-control">
             </div>
-            <div class="form-group">
+            {% comment %} <div class="form-group">
                 <label for="latitude">Latitude:</label>
                 <input type="text" id="latitude" name="latitude" class="form-control">
             </div>
             <div class="form-group">
                 <label for="longitude">Longitude:</label>
                 <input type="text" id="longitude" name="longitude" class="form-control">
-            </div>
+            </div> {% endcomment %}
             <input type="submit" value="Submit" class="btn btn-primary">
         </form>
     </div>
