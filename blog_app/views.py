@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from .send_email import send_otp_email
 from django.http import HttpResponseRedirect
+from .filters import BlogDataFilter
 import random
 import string
 
@@ -14,11 +15,19 @@ import string
 def index(request):
     blogs = blogdata.objects.all()
     categories = Category.objects.all()
-    p = Paginator(blogdata.objects.all(), 3)
+    f = BlogDataFilter(request.GET, queryset=blogdata.objects.all())
+    
+    print("=========>", f)
+    p = Paginator(blogdata.objects.all(), 4)
     page = request.GET.get('page')
     blogs_list = p.get_page(page)
+    context = {
+        'blogs': blogs,
+        'filter': f,
+        'blogs_list': blogs_list,
+    }
 
-    return render(request, 'index.html', {'blogs': blogs, 'blogs_list': blogs_list})
+    return render(request, 'index.html', context)
 
 
 
@@ -170,6 +179,7 @@ def my_blogs(request, pk):
 def show_blog(request):
     blogs = blogdata.objects.all()
     return render(request, 'standard-fullwidth.html', {'blogs': blogs})
+
 
 
 

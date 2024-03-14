@@ -8,4 +8,4 @@ def show_categories():
     categories = Category.objects.all()
     return categories
 
-   
+

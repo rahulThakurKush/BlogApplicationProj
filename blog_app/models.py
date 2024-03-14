@@ -59,17 +59,6 @@ class UserProfile(models.Model):
 
 
 
-# class Like(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     blog_post = models.ForeignKey('BlogPost', on_delete=models.CASCADE)
-#     created_at = models.DateTimeField(auto_now_add=True)
-
-#     class Meta:
-#         unique_together = ('user', 'blog_post') 
-
-
-
-
 class blogdata(models.Model):
     user = models.ForeignKey(UserModel,on_delete=models.CASCADE, blank=True, null=True)
     title = models.CharField(max_length=255)
